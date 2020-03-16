@@ -10,3 +10,6 @@ def index():
 def info():
     # return 'Info'
     return render_template('info.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
