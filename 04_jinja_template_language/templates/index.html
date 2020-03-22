@@ -97,5 +97,70 @@
         {% endfor %}
     </ul>
 
+    {# Filters #}
+
+    <h1> Filters </h1>
+
+    <h3> Basic </h3>
+
+    <p> title: "dust in the wind" --> {{ "dust in the wind"|title }}</p>
+
+    <p> round(2): 5.3266 --> {{ 5.3266|round(2) }}</p>
+
+    <p> upper: "jerry" --> {{ "jerry"|upper }}</p>
+
+    <p> lower: "JERRY" --> {{ "JERRY"|lower }}</p>
+
+    <p> capitalize: "jerry" --> {{ "jerry"|capitalize }}</p>
+
+    <p> length: "jerry" --> {{ "jerry"|length }}</p>
+
+    <p> random: "jerry" --> {{ "jerry"|random }}</p>
+
+
+
+    {# Macros #}
+
+    <h1> Macros </h1>
+
+    {# Escaping #}
+
+    <h1> Escaping </h1>
+
+    <h3> Basic </h3>
+
+    {% set html = "<p>Escaping in Jinja</p>" %}
+    {{ html|escape }}
+
+    
+    {# Including templates #}
+
+    <h1> Including templates </h1>
+
+    <p1> {{ "{% include 'path/to/template' %}"|escape }} </p1>
+
+
+    {# Template Inheritance #}
+
+    <h1> Template Inheritance </h1>
+
+    {% extends 'base.html' %}
+ 
+    {% block title %}
+        Child Title 
+    {% endblock %}
+    
+    {% block nav %}
+        {{ super() }} {# referring to the content in the parent templates #}
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/career">Career</a></li>
+    {% endblock %}
+    
+    {% block content %}
+        {% for bookmark in bookmarks %}
+            <p>{{ bookmark.title }}</p>
+        {% endfor %}
+    {% endblock %}
+
 </body>
 </html>
