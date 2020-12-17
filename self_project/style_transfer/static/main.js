@@ -2,36 +2,36 @@
 // Drag and drop image handling
 //========================================================================
 
-var fileDrag = document.getElementById("file-drag");
-var fileSelect = document.getElementById("file-upload");
+var stylefileDrag = document.getElementById("style-drag");
+var stylefileSelect = document.getElementById("style-upload");
 var contentfileDrag = document.getElementById("content-drag");
 var contentfileSelect = document.getElementById("content-upload");
 
 // Add event listeners
-fileDrag.addEventListener("dragover", fileDragHover, false);
-fileDrag.addEventListener("dragleave", fileDragHover, false);
-fileDrag.addEventListener("drop", fileSelectHandler, false);
-fileSelect.addEventListener("change", fileSelectHandler, false);
+stylefileDrag.addEventListener("dragover", stylefileDragHover, false);
+stylefileDrag.addEventListener("dragleave", stylefileDragHover, false);
+stylefileDrag.addEventListener("drop", stylefileSelectHandler, false);
+stylefileSelect.addEventListener("change", stylefileSelectHandler, false);
 
 contentfileDrag.addEventListener("dragover", contentfileDragHover, false);
 contentfileDrag.addEventListener("dragleave", contentfileDragHover, false);
 contentfileDrag.addEventListener("drop", contentfileSelectHandler, false);
 contentfileSelect.addEventListener("change", contentfileSelectHandler, false);
 
-function fileDragHover(e) {
+function stylefileDragHover(e) {
   // prevent default behaviour
   e.preventDefault();
   e.stopPropagation();
 
-  fileDrag.className = e.type === "dragover" ? "upload-box dragover" : "upload-box";
+  stylefileDrag.className = e.type === "dragover" ? "upload-box dragover" : "upload-box";
 }
 
-function fileSelectHandler(e) {
+function stylefileSelectHandler(e) {
   // handle file selecting
   var files = e.target.files || e.dataTransfer.files;
-  fileDragHover(e);
+  stylefileDragHover(e);
   for (var i = 0, f; (f = files[i]); i++) {
-    previewFile(f);
+    stylepreviewFile(f);
   }
 }
 
@@ -56,10 +56,10 @@ function contentfileSelectHandler(e) {
 // Web page elements for functions to use
 //========================================================================
 
-var imagePreview = document.getElementById("image-preview");
+var styleimagePreview = document.getElementById("style-image");
 var contentimagePreview = document.getElementById("content-image");
 var imageDisplay = document.getElementById("image-display");
-var uploadCaption = document.getElementById("upload-caption");
+var styleCaption = document.getElementById("style-caption");
 var contentCaption = document.getElementById("content-caption");
 var predResult = document.getElementById("pred-result");
 var loader = document.getElementById("loader");
@@ -81,42 +81,43 @@ function submitImage() {
   imageDisplay.classList.add("loading");
 
   // call the predict function of the backend
-  predictImage(imageDisplay.src);
+  predictImage(contentimagePreview.src, imageDisplay.src);
 }
 
 function clearImage() {
   // reset selected files
-  fileSelect.value = "";
+  stylefileSelect.value = "";
+  contentfileSelect.value = "";
 
   // remove image sources and hide them
-  imagePreview.src = "";
+  styleimagePreview.src = "";
   contentimagePreview.src = "";
   imageDisplay.src = "";
   predResult.innerHTML = "";
 
-  hide(imagePreview);
+  hide(styleimagePreview);
   hide(contentimagePreview);
   hide(imageDisplay);
   hide(loader);
   hide(predResult);
-  show(uploadCaption);
+  show(styleCaption);
   show(contentCaption);
 
   imageDisplay.classList.remove("loading");
 }
 
-function previewFile(file) {
+function stylepreviewFile(file) {
   // show the preview of the image
   console.log(file.name);
-  var fileName = encodeURI(file.name);
+  var stylefileName = encodeURI(file.name);
 
   var reader = new FileReader();
   reader.readAsDataURL(file);
   reader.onloadend = () => {
-    imagePreview.src = URL.createObjectURL(file);
+    styleimagePreview.src = URL.createObjectURL(file);
 
-    show(imagePreview);
-    hide(uploadCaption);
+    displayImage(reader.result, "style-image");
+    hide(styleCaption);
 
     // reset
     predResult.innerHTML = "";
@@ -129,7 +130,7 @@ function previewFile(file) {
 function contentpreviewFile(file) {
   // show the preview of the image
   console.log(file.name);
-  var fileName = encodeURI(file.name);
+  var contentfileName = encodeURI(file.name);
 
   var reader = new FileReader();
   reader.readAsDataURL(file);
@@ -138,7 +139,7 @@ function contentpreviewFile(file) {
     contentimagePreview.src = URL.createObjectURL(file);
 
     // show(imagePreview);
-    show(contentimagePreview);
+    displayImage(reader.result, "content-image");
     hide(contentCaption);
 
     // reset
@@ -153,14 +154,18 @@ function contentpreviewFile(file) {
 // Helper functions
 //========================================================================
 
-function predictImage(image) {
+function predictImage(contentimage, styleimage) {
   fetch("/predict", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify(image)
-  })
+    body: JSON.stringify({
+      "Content-Image": JSON.stringify(contentimage),
+      "Style-Image": JSON.stringify(styleimage)
+    })
+    
+})
     .then(resp => {
       if (resp.ok)
         resp.json().then(data => {

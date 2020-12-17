@@ -96,7 +96,7 @@ body {
   border-color: rgb(0, 120, 212);
 }
 
-.upload-box #image-preview {
+.upload-box #style-image {
   max-width: 14rem;
   max-height: 8rem;
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.19);
