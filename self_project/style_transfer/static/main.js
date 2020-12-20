@@ -72,16 +72,18 @@ function submitImage() {
   // action for the submit button
   console.log("submit");
 
-  if (!imageDisplay.src || !imageDisplay.src.startsWith("data")) {
-    window.alert("Please select an image before submit.");
+  if (!contentimagePreview.src || !contentimagePreview.src.startsWith("data")) {
+    window.alert("Please select an content image before submit.");
     return;
   }
 
-  loader.classList.remove("hidden");
-  imageDisplay.classList.add("loading");
-
+  if (!styleimagePreview.src || !styleimagePreview.src.startsWith("data")) {
+    window.alert("Please select an style image before submit.");
+    return;
+  }
+  show(loader);
   // call the predict function of the backend
-  predictImage(contentimagePreview.src, imageDisplay.src);
+  predictImage(contentimagePreview.src, styleimagePreview.src);
 }
 
 function clearImage() {
@@ -120,10 +122,10 @@ function stylepreviewFile(file) {
     hide(styleCaption);
 
     // reset
-    predResult.innerHTML = "";
-    imageDisplay.classList.remove("loading");
+    // predResult.innerHTML = "";
+    // imageDisplay.classList.remove("loading");
 
-    displayImage(reader.result, "image-display");
+    // displayImage(reader.result, "image-display");
   };
 }
 
@@ -143,10 +145,10 @@ function contentpreviewFile(file) {
     hide(contentCaption);
 
     // reset
-    predResult.innerHTML = "";
-    imageDisplay.classList.remove("loading");
+    // predResult.innerHTML = "";
+    // imageDisplay.classList.remove("loading");
 
-    displayImage(reader.result, "image-display");
+    // displayImage(reader.result, "image-display");
   };
 }
 
@@ -169,7 +171,8 @@ function predictImage(contentimage, styleimage) {
     .then(resp => {
       if (resp.ok)
         resp.json().then(data => {
-          displayResult(data);
+          // displayResult(data);
+          displayImage(data.result, "image-display")
         });
     })
     .catch(err => {
@@ -180,6 +183,7 @@ function predictImage(contentimage, styleimage) {
 
 function displayImage(image, id) {
   // display image on given id <img> element
+  hide(loader);
   let display = document.getElementById(id);
   display.src = image;
   show(display);

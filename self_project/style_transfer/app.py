@@ -9,13 +9,14 @@ from gevent.pywsgi import WSGIServer
 # TensorFlow and tf.keras
 import tensorflow as tf
 from tensorflow import keras
-
 from tensorflow.keras.applications.imagenet_utils import preprocess_input, decode_predictions
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
+
 # Some utilites
+import cv2 as cv
 import numpy as np
-from util import base64_to_pil
+from util import *
 
 
 # Declare a flask app
@@ -65,66 +66,45 @@ def run_style_transform(style_bottleneck, preprocessed_content_image):
 
     return stylized_image
 
-def model_predict(img, model):
-    img = img.resize((224, 224))
-
-    # Preprocessing the image
-    x = image.img_to_array(img)
-    # x = np.true_divide(x, 255)
-    x = np.expand_dims(x, axis=0)
-
-    # Be careful how your trained model deals with the input
-    # otherwise, it won't make correct prediction!
-    x = preprocess_input(x, mode='tf')
-
-    preds = model.predict(x)
-    return preds
-
-
 @app.route('/', methods=['GET'])
 def index():
     # Main page
     return render_template('index.html')
 
-
 @app.route('/predict', methods=['GET', 'POST'])
 def predict():
     if request.method == 'POST':
         # Get the image from post request
-        print(type(request.json["Content-Image"]), len(request.json["Content-Image"]))
-        print(request.json["Content-Image"][:20])
-        print(type(request.json["Style-Image"]), len(request.json["Style-Image"]))
-        print(request.json["Style-Image"][:20])
-        # content_img = base64_to_pil(request.json["Content-Image"])
+        content_img = base64_to_pil(request.json["Content-Image"])
         style_img = base64_to_pil(request.json["Style-Image"])
-        print("Image Loaded !")
+        # print("Image Loaded !")
 
-        # # Preprocess the input images.
-        # preprocessed_content_image = preprocess_image(content_img, 384)
-        # preprocessed_style_image = preprocess_image(style_img, 256)
+        # Preprocess the input images.
+        preprocessed_content_image = preprocess_image(content_img, 384)
+        preprocessed_style_image = preprocess_image(style_img, 256)
 
         # print('Style Image Shape:', preprocessed_style_image.shape)
         # print('Content Image Shape:', preprocessed_content_image.shape)
 
-        # # # Calculate style bottleneck for the preprocessed style image.
-        # style_bottleneck = run_style_predict(preprocessed_style_image)
+        # Calculate style bottleneck for the preprocessed style image.
+        style_bottleneck = run_style_predict(preprocessed_style_image)
         # print('Style Bottleneck Shape:', style_bottleneck.shape)
 
-        # # # Stylize the content image using the style bottleneck.
-        # stylized_image = run_style_transform(style_bottleneck, preprocessed_content_image)
-        # print(stylized_image.shape)
+        # Stylize the content image using the style bottleneck.
+        stylized_image = (run_style_transform(style_bottleneck, preprocessed_content_image)*255).astype(np.uint8)[0]
+        # print(stylized_image.shape, stylized_image.min(), stylized_image.max())
+        
         # Serialize the result, you can add additional fields
-        return jsonify(result="Test", probability="0.5")
-        # return jsonify(result=stylized_image)
+        return jsonify(result=np_to_base64(stylized_image))
 
     return None
 
 
 if __name__ == '__main__':
     print("Run Server !")
-    app.run(port=5000, debug=True)
+    # app.run(port=5000, debug=True)
 
     # Serve the app with gevent
     
-    # http_server = WSGIServer(('0.0.0.0', 5000), app)
-    # http_server.serve_forever()
+    http_server = WSGIServer(('0.0.0.0', 5000), app)
+    http_server.serve_forever()
