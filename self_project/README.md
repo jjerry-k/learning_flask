@@ -13,4 +13,3 @@
 - To do list
     - [x] Check output type of ImageDisplay 
     - [x] Implement Transfer btn
-    - [ ] Simplify main.js 

@@ -22,8 +22,6 @@ from util import *
 # Declare a flask app
 app = Flask(__name__)
 
-print('Model loaded. Check http://127.0.0.1:5000/')
-
 # Set model path
 style_predict_path = tf.keras.utils.get_file('style_predict.tflite', 'https://tfhub.dev/google/lite-model/magenta/arbitrary-image-stylization-v1-256/int8/prediction/1?lite-format=tflite')
 style_transform_path = tf.keras.utils.get_file('style_transform.tflite', 'https://tfhub.dev/google/lite-model/magenta/arbitrary-image-stylization-v1-256/int8/transfer/1?lite-format=tflite')
@@ -102,9 +100,9 @@ def predict():
 
 if __name__ == '__main__':
     print("Run Server !")
-    # app.run(port=5000, debug=True)
+    # app.run(host='0.0.0.0')
 
     # Serve the app with gevent
     
-    http_server = WSGIServer(('0.0.0.0', 5000), app)
+    http_server = WSGIServer(app)
     http_server.serve_forever()
