@@ -1,5 +1,7 @@
 import os
 import sys
+import time
+import platform
 
 # Flask
 from flask import Flask, redirect, url_for, request, render_template, Response, jsonify, redirect
@@ -8,10 +10,19 @@ from gevent.pywsgi import WSGIServer
 
 # TensorFlow and tf.keras
 import tensorflow as tf
+# If use tflite
+import tflite_runtime.interpreter as tflite
 from tensorflow import keras
 from tensorflow.keras.applications.imagenet_utils import preprocess_input, decode_predictions
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
+
+# For Coral USB
+EDGETPU_SHARED_LIB = {
+    'Linux': 'libedgetpu.so.1',
+    'Darwin': 'libedgetpu.1.dylib',
+    'Windows': 'edgetpu.dll'
+}[platform.system()]
 
 # Some utilites
 import cv2 as cv
@@ -26,10 +37,19 @@ app = Flask(__name__)
 style_predict_path = tf.keras.utils.get_file('style_predict.tflite', 'https://tfhub.dev/google/lite-model/magenta/arbitrary-image-stylization-v1-256/int8/prediction/1?lite-format=tflite')
 style_transform_path = tf.keras.utils.get_file('style_transform.tflite', 'https://tfhub.dev/google/lite-model/magenta/arbitrary-image-stylization-v1-256/int8/transfer/1?lite-format=tflite')
 
+def make_interpreter(model_path):
+    model_path, *device = model_path.split('@')
+    return tflite.Interpreter(
+        model_path=model_path,
+        experimental_delegates=[
+            tflite.load_delegate(EDGETPU_SHARED_LIB,
+                                {'device': device[0]} if device else {})
+        ])
+        
 def run_style_predict(preprocessed_style_image):
     # Load the model.
     interpreter = tf.lite.Interpreter(model_path=style_predict_path)
-
+    # interpreter = make_interpreter(model_path=style_predict_path)
     # Set model input.
     interpreter.allocate_tensors()
     input_details = interpreter.get_input_details()
@@ -47,6 +67,7 @@ def run_style_predict(preprocessed_style_image):
 def run_style_transform(style_bottleneck, preprocessed_content_image):
     # Load the model.
     interpreter = tf.lite.Interpreter(model_path=style_transform_path)
+    # interpreter = make_interpreter(model_path=style_transform_path)
 
     # Set model input.
     input_details = interpreter.get_input_details()
@@ -72,6 +93,7 @@ def index():
 @app.route('/predict', methods=['GET', 'POST'])
 def predict():
     if request.method == 'POST':
+        start = time.perf_counter()
         # Get the image from post request
         content_img = base64_to_pil(request.json["Content-Image"])
         style_img = base64_to_pil(request.json["Style-Image"])
@@ -91,7 +113,8 @@ def predict():
         # Stylize the content image using the style bottleneck.
         stylized_image = (run_style_transform(style_bottleneck, preprocessed_content_image)*255).astype(np.uint8)[0]
         # print(stylized_image.shape, stylized_image.min(), stylized_image.max())
-        
+        inference_time = time.perf_counter() - start
+        print('%.1fms' % (inference_time * 1000))
         # Serialize the result, you can add additional fields
         return jsonify(result=np_to_base64(stylized_image))
 

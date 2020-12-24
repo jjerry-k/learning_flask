@@ -13,3 +13,4 @@
 - To do list
     - [x] Check output type of ImageDisplay 
     - [x] Implement Transfer btn
+    - [x] Image size each window

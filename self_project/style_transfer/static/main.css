@@ -97,14 +97,14 @@ body {
 }
 
 .upload-box #style-image {
-  max-width: 14rem;
-  max-height: 8rem;
+  max-width: -webkit-fill-available;
+  max-height: -webkit-fill-available;
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.19);
 }
 
 .upload-box #content-image {
-  max-width: 14rem;
-  max-height: 8rem;
+  max-width: -webkit-fill-available;
+  max-height: -webkit-fill-available;
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.19);
 }
 
