@@ -39,6 +39,7 @@ style_transform_path = tf.keras.utils.get_file('style_transform.tflite', 'https:
 
 def make_interpreter(model_path):
     model_path, *device = model_path.split('@')
+    print(device)
     return tflite.Interpreter(
         model_path=model_path,
         experimental_delegates=[
