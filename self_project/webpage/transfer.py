@@ -23,19 +23,15 @@ from io import BytesIO
 style_predict_path = tf.keras.utils.get_file('style_predict.tflite', 'https://tfhub.dev/google/lite-model/magenta/arbitrary-image-stylization-v1-256/int8/prediction/1?lite-format=tflite')
 style_transform_path = tf.keras.utils.get_file('style_transform.tflite', 'https://tfhub.dev/google/lite-model/magenta/arbitrary-image-stylization-v1-256/int8/transfer/1?lite-format=tflite')
 
-# def make_interpreter(model_path):
-#     model_path, *device = model_path.split('@')
-#     return tflite.Interpreter(
-#         model_path=model_path,
-#         experimental_delegates=[
-#             tflite.load_delegate(EDGETPU_SHARED_LIB,
-#                                 {'device': device[0]} if device else {})
-#         ])
+def make_interpreter(model_path, runtime="cpu"):
+    if runtime == "coral":
+        model_path, *device = model_path.split('@')
+        return tflite.Interpreter(model_path=model_path, experimental_delegates=[tflite.load_delegate(EDGETPU_SHARED_LIB,{'device': device[0]} if device else {})])        
+    else:
+        return tf.lite.Interpreter(model_path=model_path)
 
-interpreter_predict = tf.lite.Interpreter(model_path=style_predict_path)
-interpreter_transform = tf.lite.Interpreter(model_path=style_transform_path)
-# interpreter_predict = make_interpreter(model_path=style_predict_path)
-# interpreter_transform = make_interpreter(model_path=style_transform_path)
+interpreter_predict = make_interpreter(model_path=style_predict_path)
+interpreter_transform = make_interpreter(model_path=style_transform_path)
 
 def run_style_predict(preprocessed_style_image):
     # Set model input.
