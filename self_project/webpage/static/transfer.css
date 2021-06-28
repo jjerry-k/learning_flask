@@ -1,16 +1,8 @@
-body {
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  background-color: #f8f8f8;
-}
-
 /* Global button style */
 .button {
   font-family: inherit;
   text-align: center;
   cursor: pointer;
-  border: none;
   text-decoration: none;
   outline: none;
   color: #ffffff;
@@ -35,6 +27,7 @@ body {
 
 .main {
   box-sizing: border-box;
+  border: 4px solid skyblue;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -51,6 +44,7 @@ body {
 
 .main .panel {
   display: flex;
+  border: 4px solid peru;
   margin-left: 10px;
   margin-right: 10px;
   align-items: center;

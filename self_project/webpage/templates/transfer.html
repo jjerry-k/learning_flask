@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Jerry's WebPage</title>
-    {# <script src="{{ url_for('static', filename='transfer.js') }}"></script> #}
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='transfer.css') }}">
 </head>
 
 <body>
   {% include 'header.html' %}
+
   <h1>Style Transfer</h1>
   <div class="main">
     <div class="panel">
@@ -40,4 +41,7 @@
   </div>
   {% include 'footer.html' %}
 </body>
+<footer>
+  <script src="{{ url_for('static',filename='transfer.js') }}"></script>
+</footer>
 </html>

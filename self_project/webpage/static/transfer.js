@@ -157,7 +157,7 @@ function contentpreviewFile(file) {
 //========================================================================
 
 function predictImage(contentimage, styleimage) {
-  fetch("/predict", {
+  fetch("/transfer/predict", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
