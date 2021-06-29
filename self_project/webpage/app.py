@@ -20,8 +20,13 @@ def about():
                             condition_1=condition_1, condition_2=condition_2)
     return render_template('about.html', **template_context)
 
+@app.route('/canvas')
+def painter():
+    # Main page
+    return render_template('canvas.html')
+
 @app.route('/transfer', methods=['GET'])
-def index():
+def transfer():
     # Main page
     return render_template('transfer.html')
 

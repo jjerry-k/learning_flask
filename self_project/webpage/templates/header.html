@@ -1,15 +1,16 @@
-{# This is templates/base.html template #}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Jerry's WebPage</title>
-</head>
 <body>
     <div class="title">
         <a href="/">
             <img src="{{ url_for('static', filename='media/Title.png') }}", alt="Jerry's WebPage", width=100%>
         </a>
     </div>
+    <div calss="menu">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/canvas">Canvas</a></li>
+            <li><a href="/transfer">Transfer</a></li>
+        </ul>
+    </br>
+    </div>
 </body>
-</html>
