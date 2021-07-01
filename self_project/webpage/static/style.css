@@ -9,10 +9,12 @@ ul{
     list-style: none;
     display: table;
     margin: auto;
+    align-items: center;
+    padding-inline-start: 0%;
 }
 
 li{
-    border:2px solid green;
+    /* border:2px solid green; */
     color: yellowgreen; 
     float: left;
     margin-left: 20px;
@@ -20,20 +22,18 @@ li{
 }
 
 .menu{
-    position: relative;
+    position: absolute;
     border: 4px solid blue;
     text-align: center;
 }
 
 .title{
-    position: relative;
+    /* position: relative; */
     border: 4px solid orange;
-    font-family: fantasy;
-    text-align: center;
-    width: 20%;
-
-    /*top bottom  하*/
-    margin: 0 0 0 40%;
+    /* float: left; */
+    display: table;
+    margin-left: auto; 
+    margin-right: auto;
 }
 
 .box1{
