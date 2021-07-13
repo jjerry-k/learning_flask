@@ -1,3 +1,12 @@
 {
-    "python.pythonPath": "/usr/bin/python3"
+    "python.pythonPath": "/usr/bin/python3",
+    "sqltools.connections": [
+        {
+            "database": "${workspaceFolder:learning_flask}/self_project/webapplication/app.db",
+            "driver": "SQLite",
+            "name": "webapplication",
+            "previewLimit": 50
+        }
+    ],
+    "sqltools.useNodeRuntime": true
 }

@@ -5,14 +5,14 @@
 {% elif request.endpoint == 'user_timeline' %}
     {{ profile_user.username }}'s Timeline
 {% else %}
-    This is Main box
+    {{ g.user.username }}'s Timeline
 {% endif %}
 {% endblock %}
 {% block body %}
 <h2>{{ self.title() }}</h2>
 {% if g.user %}
     {% if request.endpoint == 'user_timeline' %}
-        <div class=followstatus>
+        <!-- <div class=followstatus>
             {% if g.user.user_id == profile_user.user_id %}
             This is you!
             {% elif followed %}
@@ -24,14 +24,14 @@
             <a class=follow href="{{ url_for('follow_user', username=profile_user.username)
                 }}">Follow user</a>.
             {% endif %}
-        </div>
+        </div> -->
     {% elif request.endpoint == 'timeline' %}
         <div class=twitbox>
-            <h3>Current User: {{ g.user.username }}</h3>
+            <h3>Please enter your message !</h3>
             <form action="{{ url_for('add_message') }}" method=post>
                 <p>
                     <input type=text name=text size=60>
-                    <input type=submit value="Test">
+                    <input type=submit value="Twit">
                 </p>
             </form>
         </div>
@@ -40,12 +40,12 @@
     <ul class=messages>
         {% for message in messages %}
         <li>
-            <img src="{{ message.email|gravatar(size=48) }}">
+            <img src="{{ message.username|gravatar(size=48) }}">
             <p>
                 <strong><a href="{{ url_for('user_timeline', username=message.username)
                     }}">{{ message.username }}</a></strong>
                 {{ message.text }}
-                <small>&mdash; {{ message.pub_date|datetimeformat }}ㅁ</small>
+                <small>&mdash; {{ message.pub_date|datetimeformat }}</small>
                 {% else %}
         </li>
         <li><em>There's no message so far.</em>
