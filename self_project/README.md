@@ -10,7 +10,7 @@
 
 ## 3. Web based Style Transfer 
 - Reference: https://github.com/mtobeiyf/keras-flask-deploy-webapp
-- To do list
-    - [x] Check output type of ImageDisplay 
-    - [x] Implement Transfer btn
-    - [x] Image size each window
+
+
+## 4. Object Detection Test Server
+- Reference: https://github.com/mtobeiyf/keras-flask-deploy-webapp
