@@ -27,13 +27,21 @@ li{
     text-align: center;
 }
 
-.title{
+.main-title{
     /* position: relative; */
     border: 4px solid orange;
     /* float: left; */
     display: table;
     margin-left: auto; 
     margin-right: auto;
+}
+
+.nav-bar{
+    list-style: none;
+    display: table;
+    margin: auto;
+    align-items: center;
+    padding-inline-start: 0%;
 }
 
 .box1{

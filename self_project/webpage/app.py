@@ -25,6 +25,10 @@ def painter():
     # Main page
     return render_template('canvas.html')
 
+@app.route('/emotion')
+def emotion():
+    return render_template('emotion.html')
+
 @app.route('/transfer', methods=['GET'])
 def transfer():
     # Main page
