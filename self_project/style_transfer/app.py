@@ -1,5 +1,4 @@
 import os
-import sys
 import time
 import platform
 
@@ -25,7 +24,6 @@ EDGETPU_SHARED_LIB = {
 }[platform.system()]
 
 # Some utilites
-import cv2 as cv
 import numpy as np
 from util import *
 
@@ -39,7 +37,6 @@ style_transform_path = tf.keras.utils.get_file('style_transform.tflite', 'https:
 
 def make_interpreter(model_path):
     model_path, *device = model_path.split('@')
-    print(device)
     return tflite.Interpreter(
         model_path=model_path,
         experimental_delegates=[
@@ -124,10 +121,9 @@ def predict():
 
     return None
 
-
 if __name__ == '__main__':
     print("Run Server !")
-    # app.run(host='0.0.0.0')
+    # app.run(host='0.0.0.0', debug=True, port=5000)
 
     # Serve the app with gevent
     
