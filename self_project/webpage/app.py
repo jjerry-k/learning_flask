@@ -1,18 +1,23 @@
 # Some utilites
-import os
+import os, datetime, psutil
 
 from transfer import *
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response
 
 app = Flask(__name__)
 
 @app.route('/')
 def main():
-    name, nick, age, condition_1, condition_2 = "Kim", "Jerry", 28, False, False
-    template_context = dict(name=name, nick=nick, age=age, 
-                            condition_1=condition_1, condition_2=condition_2)
-    return render_template('main.html', **template_context)
+    temp = os.popen("cd /home/pi/Script && ./check_temp.sh").read()
+    date, time, _, _, _, cpu_temp, _, _, gpu_temp = temp[:-1].split(" ")
+    result = {
+        "date": date, 
+        "time": time, 
+        "CPU_Temperature": cpu_temp[:-1],
+        "GPU_Temperature": gpu_temp
+        }
+    return render_template('main.html', **result)
 
 @app.route('/about')
 def about():
@@ -53,19 +58,15 @@ def predict():
 
     return None
 
-@app.route('/check_temp', methods=['POST', 'GET'])
 def check_temp():
-    if request.method == 'POST':
-        temp = os.popen("cd /home/pi/Script && ./check_temp.sh").read()
-        date, time, _, _, _, cpu_temp, _, _, gpu_temp = temp[:-1].split(" ")
-        result = {
-            "date": date, 
-            "time": time, 
-            "CPU Temperature": cpu_temp,
-            "GPU Temperature": gpu_temp
-            }
-        return jsonify(result)
-    return None
+    temp = os.popen("cd /home/pi/Script && ./check_temp.sh").read()
+    date, time, _, _, _, cpu_temp, _, _, gpu_temp = temp[:-1].split(" ")
+    result = f"{date} {time} \n CPU Temperature: {cpu_temp} \n GPU Temperature: {gpu_temp}"
+    return result
     
+@app.route('/time_feed')
+def time_feed():
+    return Response(check_temp(), mimetype='text') 
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=5000)

@@ -8,6 +8,22 @@
 <body>
     {% include 'header.html' %}
     <h1> Main Page</h1>
+
+    <h2> Raspberry Pi Status</h2>
+
+    <p id="clock">Here will be date|time</p>
+
+    <script>
+        var clock = document.getElementById("clock");
+
+        setInterval(() => {
+            fetch("{{ url_for('time_feed') }}")
+            .then(response => {
+                    response.text().then(t => {clock.innerHTML = t})
+                });
+            }, 1000);  
+    </script>
+    
     {% include 'footer.html' %}
 </body>
 </html>
