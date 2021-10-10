@@ -1,5 +1,7 @@
 import os
 import time
+import uuid
+import datetime
 
 # MongoDB
 import pymongo
@@ -18,12 +20,16 @@ from transfer import *
 HOST = "0.0.0.0"
 PORT = "27017"
 DB = "transfer"
-COLL = "param"
+COLL = "meta"
 
-# CLIENT = pymongo.MongoClient(f"mongodb://{HOST}:{PORT}")
+CLIENT = pymongo.MongoClient(f"mongodb://{HOST}:{PORT}")
 
-# def update_db(collection: str, item: dict):
-#     CLIENT[DB][collection].insert(item)
+def update_db(collection: str, item: dict):
+    CLIENT[DB][collection].insert(item)
+
+def np_pil_save(numpy, path):
+    img = Image.fromarray(numpy)
+    img.save(path)
 
 app = Flask(__name__)
 
@@ -52,7 +58,26 @@ def predict():
         stylized_image = (run_style_transform(style_bottleneck, preprocessed_content_image)*255).astype(np.uint8)[0]
         inference_time = time.perf_counter() - start
         # print('%.1fms' % (inference_time * 1000))
-        # print(request.remote_addr)
+
+        file_name = f"{uuid.uuid4().hex}.jpg"
+        content_path = f"/mongodb/data/content/{file_name}"
+        style_path = f"/mongodb/data/style/{file_name}"
+        transfer_path = f"/mongodb/data/transfer/{file_name}"
+
+        np_pil_save((preprocessed_content_image*255).numpy().astype(np.uint8)[0], content_path)
+        np_pil_save((preprocessed_style_image*255).numpy().astype(np.uint8)[0], style_path)
+        np_pil_save(stylized_image, transfer_path)
+
+        meta = {
+            "IP": request.remote_addr,
+            "Time": datetime.datetime.now().ctime(),
+            "ContentimagePath": content_path,
+            "StyleimagePath": style_path,
+            "TransferimagePath": transfer_path
+        }
+        
+        update_db(COLL, meta)
+
         # Serialize the result, you can add additional fields
         transfer_byte, transfer_image = np_to_base64(stylized_image)
         return jsonify(result=transfer_image)
@@ -64,4 +89,4 @@ if __name__ == '__main__':
     # Serve the app with gevent
     app.run(host='0.0.0.0', port=5000)
     # http_server = WSGIServer(app)
-    # http_server.serve_forever()
+    # http_server.serve_forever()sudo e2label /dev/sdb1 "mydiskname"
