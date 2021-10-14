@@ -37,7 +37,7 @@ def np_to_base64(img_np):
     buffered = BytesIO()
     img.save(buffered, format="PNG")
     byte_image = buffered.getvalue()
-    return byte_image, u"data:image/png;base64," + base64.b64encode(byte_image).decode("ascii")
+    return u"data:image/png;base64," + base64.b64encode(byte_image).decode("ascii")
 
 # Function to pre-process by resizing an central cropping it.
 def preprocess_image(img, target_dim):

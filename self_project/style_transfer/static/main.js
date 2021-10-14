@@ -82,8 +82,8 @@ function submitImage() {
     return;
   }
   show(loader);
-  // call the predict function of the backend
-  predictImage(contentimagePreview.src, styleimagePreview.src);
+  // call the transfer function of the backend
+  transferImage(contentimagePreview.src, styleimagePreview.src);
 }
 
 function clearImage() {
@@ -156,8 +156,8 @@ function contentpreviewFile(file) {
 // Helper functions
 //========================================================================
 
-function predictImage(contentimage, styleimage) {
-  fetch("/predict", {
+function transferImage(contentimage, styleimage) {
+  fetch("/transfer", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

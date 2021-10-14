@@ -38,8 +38,8 @@ def index():
     # Main page
     return render_template('index.html')
 
-@app.route('/predict', methods=['GET', 'POST'])
-def predict():
+@app.route('/transfer', methods=['GET', 'POST'])
+def transfer():
     if request.method == 'POST':
         start = time.perf_counter()
         # Get the image from post request
@@ -79,7 +79,7 @@ def predict():
         update_db(COLL, meta)
 
         # Serialize the result, you can add additional fields
-        transfer_byte, transfer_image = np_to_base64(stylized_image)
+        transfer_image = np_to_base64(stylized_image)
         return jsonify(result=transfer_image)
 
     return None
