@@ -41,12 +41,13 @@ def index():
 @app.route('/transfer', methods=['GET', 'POST'])
 def transfer():
     if request.method == 'POST':
-        start = time.perf_counter()
+        
         # Get the image from post request
-        content_byte, content_img = base64_to_pil(request.json["Content-Image"])
-        style_byte, style_img = base64_to_pil(request.json["Style-Image"])
+        _, content_img = base64_to_pil(request.json["Content-Image"])
+        _, style_img = base64_to_pil(request.json["Style-Image"])
         # print("Image Loaded !")
 
+        origin_width, origin_height = content_img.size
         # Preprocess the input images.
         preprocessed_content_image = preprocess_image(content_img, 384)
         preprocessed_style_image = preprocess_image(style_img, 256)
@@ -56,7 +57,9 @@ def transfer():
 
         # Stylize the content image using the style bottleneck.
         stylized_image = (run_style_transform(style_bottleneck, preprocessed_content_image)*255).astype(np.uint8)[0]
-        inference_time = time.perf_counter() - start
+        stylized_image = tf.image.resize(stylized_image, [origin_height, origin_width]).numpy().astype(np.uint8)
+        
+        # inference_time = time.perf_counter() - start
         # print('%.1fms' % (inference_time * 1000))
 
         file_name = f"{uuid.uuid4().hex}.jpg"
